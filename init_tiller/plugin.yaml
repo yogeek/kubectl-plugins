@@ -1,0 +1,7 @@
+name: "init-tiller"
+shortDesc: "Init Tiller in a namespace"
+longDesc: >
+  Init Tiller with RBAC in a given namespace.
+  Example:
+    kubectl init-tiller mynamespace
+command: ./init_tiller.sh
