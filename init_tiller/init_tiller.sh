@@ -27,7 +27,6 @@ main() {
   if ! hash kubectl 2>/dev/null; then
     echo >&2 "kubectl is not installed"
     exit 1
-    fi
   fi
 
   # Check kubens  
@@ -46,7 +45,7 @@ main() {
 
   # Parse args
   if [[ "$#" -eq 0 ]]; then
-      echo "TODO : display namespace without Tiller installed"
+      # echo "TODO : display namespace without Tiller installed"
       usage
       exit 1
   elif [[ "$#" -eq 1 ]]; then

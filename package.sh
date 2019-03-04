@@ -1,1 +1,1 @@
-tar zcvf kubectl-init_tiller-linux-amd64.tar.gz init_tiller
+tar zcvf kubectl-init-tiller-v1.0.0.tar.gz init_tiller

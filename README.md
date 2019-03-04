@@ -38,7 +38,7 @@ For Kubernetes 1.12 or newer:
 
 ```shell
 mkdir -p ~/.kube/plugins/init-tiller && \
-curl -sL https://github.com/yogeek/kubectl-plugins/releases/download/v0.2.1/kubectl-init_tiller-v1.0.0.tar.gz | tar xzvf - -C ~/.kube/plugins/init-tiller
+curl -sL https://github.com/yogeek/kubectl-plugins/releases/download/1.0.0/kubectl-init_tiller-linux-amd64.tar.gz | tar xzvf - -C ~/.kube/plugins/init-tiller
 export PATH=$PATH:~/.kube/plugins/init-tiller/
 ```
 
