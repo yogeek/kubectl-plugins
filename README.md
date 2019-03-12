@@ -18,28 +18,30 @@ USAGE:
 
 ## Installation
 
+### Install with Curl (as root)
+
+_For Kubernetes 1.12 or newer_
+
+```shell
+curl -Lo /usr/local/bin/kubectl-init-tiller https://raw.githubusercontent.com/yogeek/kubectl-plugins/master/init_tiller/init_tiller.sh 
+chmod +x /usr/local/bin/kubectl-init-tiller
+```
+
 ### Install with krew
 
 1. [Install krew](https://github.com/GoogleContainerTools/krew) plugin manager for kubectl.
 2. Run `kubectl krew install init-tiller`.
 3. Start using by running `kubectl init-tiller NAMESPACE`.
 
-### Update with krew
+#### Update with krew
+
+*Warning* : NOT AVAILABLE YET => cf. `Install with curl` method
+_This plugin has not been added to [krew index](https://github.com/GoogleContainerTools/krew-index/pull/87) yet._
 
 Krew makes update process very simple. To update to latest version run
 
 ```shell
 kubectl krew upgrade init-tiller
-```
-
-### Install with Curl
-
-For Kubernetes 1.12 or newer:
-
-```shell
-mkdir -p ~/.kube/plugins/init-tiller && \
-curl -sL https://github.com/yogeek/kubectl-plugins/releases/download/1.0.0/kubectl-init_tiller-linux-amd64.tar.gz | tar xzvf - -C ~/.kube/plugins/init-tiller
-export PATH=$PATH:~/.kube/plugins/init-tiller/
 ```
 
 ## Try the plugin
