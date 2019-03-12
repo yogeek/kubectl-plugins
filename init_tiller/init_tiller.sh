@@ -13,10 +13,10 @@ USAGE:
   init-tiller -h,--help     : show this message
 
   This plugin executes the following actions in the given namespace:
-    - create a Service Account ("tiller-$namespace")
-    - create a Role that allows Tiller to manage all resources of the namespace ("tiller-role-$namespace") 
-    - create a RoleBinding to link the SA and the Role ("tiller-rolebinding-$namespace")
-    - deploy Tiller with the Service Account "tiller-$namespace"
+    - create a Service Account ("tiller-${namespace}")
+    - create a Role that allows Tiller to manage all resources of the namespace ("tiller-role-${namespace}") 
+    - create a RoleBinding to link the SA and the Role ("tiller-rolebinding-${namespace}")
+    - deploy Tiller with the Service Account "tiller-${namespace}"
 EOF
 }
 
@@ -63,42 +63,59 @@ main() {
     exit 1
   fi
 
-  echo "NS = $namespace"
+  echo "Working on ${namespace} namespace..."
 
   # Switch to namespace
-  kubens $namespace
+  kubens ${namespace}
+
+  # Init resources names
+  sa_name="tiller-${namespace}"
+  role_name="tiller-role-${namespace}"
+  rolebinding_name="tiller-rolebinding-${namespace}"
 
   # Create Service Account for Tiller in the namespace
-  kubectl create serviceaccount "tiller-$namespace" --namespace $namespace
+  if [[ "$(kubectl get sa --field-selector metadata.name=${sa_name})" != "" ]]; then
+    echo "ServiceAccount '${sa_name}' already exists."
+  else
+    kubectl create serviceaccount "tiller-${namespace}" --namespace ${namespace}
+  fi
 
   # Create Role for Tiller in the namespace
-  kubectl create role "tiller-role-$namespace" \
-    --namespace $namespace \
-    --verb=* \
-    --resource=*.,*.apps,*.batch,*.extensions
+  if [[ "$(kubectl get role --field-selector metadata.name=${role_name})" != "" ]]; then
+    echo "Role '${role_name}' already exists."
+  else
+    kubectl create role "tiller-role-${namespace}" \
+      --namespace ${namespace} \
+      --verb=* \
+      --resource=*.,*.apps,*.batch,*.extensions
+  fi
 
   # Create Rolebinding between Service Account and Role in the namespace
-  kubectl create rolebinding "tiller-rolebinding-$namespace" \
-    --namespace $namespace \
-    --role="tiller-role-$namespace" \
-    --serviceaccount="$namespace:tiller-$namespace"
+  if [[ "$(kubectl get rolebinding --field-selector metadata.name=${rolebinding_name})" != "" ]]; then
+    echo "RoleBinding '${rolebinding_name}' already exists."
+  else
+    kubectl create rolebinding "${rolebinding_name}" \
+      --namespace ${namespace} \
+      --role="tiller-role-${namespace}" \
+      --serviceaccount="${namespace}:tiller-${namespace}"
+  fi
 
   # Deploy Tiller with the Service Account in the namespace
   helm init \
-    --service-account "tiller-$namespace" \
-    --tiller-namespace $namespace \
+    --service-account "${sa_name}" \
+    --tiller-namespace ${namespace} \
     --override "spec.template.spec.containers[0].command'='{/tiller,--storage=secret}" \
     --upgrade \
     --wait \
 
   echo "---------------------------------------------------"
-  echo "Tiller has been deployed with RBAC in $namespace"
+  echo "Tiller has been deployed with RBAC in ${namespace}"
 
   echo "Example to test it :" 
   echo "\$ helm repo update"
-  echo "\$ helm install stable/mysql --name mymysql --tiller-namespace $namespace --wait"
-  echo "\$ helm list --tiller-namespace $namespace"
-  echo "\$ helm delete mymysql --tiller-namespace $namespace"
+  echo "\$ helm install stable/mysql --name mymysql --tiller-namespace ${namespace} --wait"
+  echo "\$ helm list --tiller-namespace ${namespace}"
+  echo "\$ helm delete mymysql --tiller-namespace ${namespace}"
   echo "---------------------------------------------------"
 
 }
